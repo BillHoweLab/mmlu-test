@@ -46,7 +46,6 @@ class CustomLlama3(DeepEvalBaseLLM):
             tokenizer=self.tokenizer,
             use_cache=True,
             device_map="auto",
-            max_new_tokens=1,
             do_sample=True,
             top_k=5,
             num_return_sequences=1,
@@ -55,10 +54,21 @@ class CustomLlama3(DeepEvalBaseLLM):
             return_full_text=False,
         )
 
-        return pipeline(prompt + self.enforced_format)
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant. You answer multiple choice questions concisely and accurately. Your responses consist of a single letter corresponding to the correct answer option (A, B, C, or D)."},
+            {"role": "user", "content": prompt},
+        ]
+
+        outputs = pipeline(
+            messages,
+            max_new_tokens=256,
+        )
+        
+        print(outputs[0]["generated_text"][-1])
+        return outputs[0]["generated_text"][-1]
 
     async def a_generate(self, prompt: str) -> str:
-        return self.generate(prompt + self.enforced_format)
+        return self.generate(prompt)
 
     def get_model_name(self):
         return f"Llama-3.1 {self.params}"
