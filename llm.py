@@ -32,6 +32,8 @@ class CustomLlama3(DeepEvalBaseLLM):
         self.tokenizer = tokenizer
         self.params = params
 
+        self.enforced_format = 'Please answer by replying with ONLY the letter of the correct option (A, B, C, or D). Do not include explanations. Answer: '
+
     def load_model(self):
         return self.model
 
@@ -56,7 +58,7 @@ class CustomLlama3(DeepEvalBaseLLM):
         return pipeline(prompt)
 
     async def a_generate(self, prompt: str) -> str:
-        return self.generate(prompt)
+        return self.generate(prompt + self.enforced_format)
 
     def get_model_name(self):
         return f"Llama-3.1 {self.params}"
