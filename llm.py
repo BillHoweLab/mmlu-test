@@ -50,6 +50,7 @@ class CustomLlama3(DeepEvalBaseLLM):
             num_return_sequences=1,
             eos_token_id=self.tokenizer.eos_token_id,
             pad_token_id=self.tokenizer.eos_token_id,
+            return_full_text=False,
         )
 
         return pipeline(prompt)
