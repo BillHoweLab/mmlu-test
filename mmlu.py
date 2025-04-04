@@ -30,7 +30,7 @@ def main():
     model = CustomLlama3(args.params, args.hftoken)
 
     # Test the model's generation function
-    test_output = model.generate("What is the answer to 2 + 2?")
+    test_output = model.generate("What is the answer to 2 + 2? ")
     print(f'Model Output: {test_output}')
 
     # Get MMLU benchmark
