@@ -1,5 +1,5 @@
 # Parse options using getopts
-while getopts ":p:t:s:h:" opt; do
+while getopts ":p:t:s:h:q:" opt; do
   case $opt in
     p) params="$OPTARG"
        ;;
@@ -8,6 +8,8 @@ while getopts ":p:t:s:h:" opt; do
     s) shots="$OPTARG"
        ;;
     h) hftoken="$OPTARG"
+       ;;
+    q) quantization="$OPTARG"
        ;;
   esac
 done
@@ -50,6 +52,11 @@ if [[ -z $hftoken ]]; then
   exit 1
 fi
 
+if [[ $quantization != "8bit" && $quantization != "4bit" && $quantization != "full" ]]; then
+  echo "Error: Invalid quantization option '$quantization'. Must be '8bit', '4bit', or 'full' (for full precision)."
+  exit 1
+fi
+
 # Load conda
 source "$(conda info --base)/etc/profile.d/conda.sh"
 
@@ -63,7 +70,8 @@ echo "Active environment: $CONDA_DEFAULT_ENV"
 python3 mmlu.py --params "$params" \
                 --tasks "$tasks" \
                 --shots "$shots" \
-                --hftoken "$hftoken"
+                --hftoken "$hftoken" \
+                --quantization "$quantization"
 
 # Deactivate conda
 conda deactivate

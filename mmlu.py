@@ -16,6 +16,7 @@ def main():
     parser.add_argument('--shots', type=int, default=0)
     parser.add_argument('--tasks', type=str, default='single')
     parser.add_argument('--hftoken', type=str, default='')
+    parser.add_argument('--quantization', type=str, default='4bit')
     args = parser.parse_args()
 
     # Check for HF token
@@ -27,7 +28,7 @@ def main():
     print("Logged in to Hugging Face successfully.")
 
     # Initialize model
-    model = CustomLlama3(args.params, args.hftoken)
+    model = CustomLlama3(args.params, args.hftoken, args.quantization)
 
     # Test the model's generation function
     test_output = model.generate("What is the answer to 2 + 2? ")
@@ -67,10 +68,10 @@ def main():
     }
 
     # Save results
-    with open(f'results/{args.params}_{args.shots}-shot_mmlu-{args.tasks}.json', 'w') as f:
+    with open(f'results/{args.params}_{args.quantization}_{args.shots}-shot_mmlu-{args.tasks}.json', 'w') as f:
         json.dump(json_score, f)
 
-    score_df.to_csv(f'results/{args.params}_{args.shots}-shot_mmlu-{args.tasks}.csv', index=False)
+    score_df.to_csv(f'results/{args.params}_{args.quantization}_{args.shots}-shot_mmlu-{args.tasks}.csv', index=False)
 
 if __name__ == '__main__':
     main()

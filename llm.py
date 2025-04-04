@@ -6,14 +6,22 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from deepeval.models import DeepEvalBaseLLM
 
 class CustomLlama3(DeepEvalBaseLLM):
-    def __init__(self, params='8B', hftoken=None):
+    def __init__(self, params='8B', hftoken=None, quantization='4bit'):
 
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
-        )
+        if quantization == '4bit':
+            quantization_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True,
+            )
+        elif quantization == '8bit':
+            quantization_config = BitsAndBytesConfig(
+                load_in_8bit=True,
+                bnb_8bit_compute_dtype=torch.float16,
+            )
+        elif quantization == 'full':
+            quantization_config = None
 
         model_4bit = AutoModelForCausalLM.from_pretrained(
             f"meta-llama/Meta-Llama-3.1-{params}-Instruct",
@@ -22,6 +30,7 @@ class CustomLlama3(DeepEvalBaseLLM):
             token=hftoken,
             trust_remote_code=True,
         )
+
         tokenizer = AutoTokenizer.from_pretrained(
             f"meta-llama/Meta-Llama-3.1-{params}-Instruct",
             token=hftoken,
